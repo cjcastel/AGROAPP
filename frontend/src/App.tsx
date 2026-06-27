@@ -150,7 +150,7 @@ export default function App() {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const response = await fetch('/aemet_data.json');
+        const response = await fetch('./aemet_data.json');
         if (response.ok) {
           const data = await response.json();
           setWeatherData(data);
@@ -1412,7 +1412,7 @@ export default function App() {
                           className="btn btn-outline" 
                           style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px', padding: '10px' }}
                           onClick={() => {
-                            setUploadedImage('/olive_leaf_disease.png');
+                            setUploadedImage('./olive_leaf_disease.png');
                             setSelectedCrop('olivar');
                             setDiagnosed(false);
                             setDiagnosisResult(null);
@@ -1424,7 +1424,7 @@ export default function App() {
                           className="btn btn-outline" 
                           style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px', padding: '10px' }}
                           onClick={() => {
-                            setUploadedImage('/wheat_leaf_rust.png');
+                            setUploadedImage('./wheat_leaf_rust.png');
                             setSelectedCrop('trigo');
                             setDiagnosed(false);
                             setDiagnosisResult(null);
