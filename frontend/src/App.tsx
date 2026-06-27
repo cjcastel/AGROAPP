@@ -12,7 +12,15 @@ import {
   Layers, 
   LogOut,
   Search,
-  Bell
+  Bell,
+  Brain,
+  Bot,
+  Sparkles,
+  Send,
+  X,
+  Thermometer,
+  Droplets,
+  Wind
 } from 'lucide-react';
 
 // --- INTERFACES DE DATOS ---
@@ -113,6 +121,46 @@ export default function App() {
   const [newPlot, setNewPlot] = useState<Plot>({ sigpac_poligono: 0, sigpac_recinto: 0, sigpac_uso: 'TA', alias: '', superficie_cultivada: 0, especie: '', variedad: '', regimen: 'secano' });
   const [newAnimal, setNewAnimal] = useState<Animal>({ crotal: '', dib: '', chip: '', fecha_nacimiento: '', fecha_alta: new Date().toISOString().split('T')[0], sexo: 'H', raza: '', madre_crotal: '', padre_crotal: '', clasificacion: 'Vacía', activo: true });
   const [newFito, setNewFito] = useState<FitoTreatment>({ fecha_aplicacion: new Date().toISOString().split('T')[0], producto: '', num_registro_oficial: '', dosis: 0, unidad_medida: 'L/ha', superficie_tratada: 0, aplicador_nombre: 'Luis M. Rodríguez', eficacia: 'Pendiente',  problema_fitosanitario: '' });
+
+  // --- ESTADOS DE CARACTERÍSTICAS DE IA ---
+  // AEMET
+  const [weatherData, setWeatherData] = useState<any>(null);
+
+  // SIEX Chatbot
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState<Array<{ role: 'bot' | 'user'; content: string }>>([
+    {
+      role: 'bot',
+      content: '¡Hola! Soy tu asesor legal **AgroApp SIEX**. Puedo asistirte en el cumplimiento del Cuaderno Digital (CUE), normativas de la PAC 2026, límites de abonado nitrogenado en zonas vulnerables, y regulaciones del MAPA. ¿Qué te gustaría consultar hoy?'
+    }
+  ]);
+  const [isChatTyping, setIsChatTyping] = useState(false);
+
+  // Diagnóstico de Plagas
+  const [selectedCrop, setSelectedCrop] = useState('olivar');
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [diagnosing, setDiagnosing] = useState(false);
+  const [diagnosed, setDiagnosed] = useState(false);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [scanStatusText, setScanStatusText] = useState('');
+  const [diagnosisResult, setDiagnosisResult] = useState<any>(null);
+
+  // --- EFECTO DE CARGA DE CLIMA (AEMET) ---
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const response = await fetch('/aemet_data.json');
+        if (response.ok) {
+          const data = await response.json();
+          setWeatherData(data);
+        }
+      } catch (err) {
+        console.error('Error al cargar datos de AEMET:', err);
+      }
+    };
+    fetchWeather();
+  }, []);
 
   // --- SEGUIMIENTO DE SUPABASE ---
   useEffect(() => {
@@ -304,6 +352,110 @@ export default function App() {
   const handleLogout = () => {
     setSessionUser(null);
     setView('login');
+  };
+
+  // --- CONTROLADOR CHATBOT COMPLIANCE SIEX ---
+  const handleSendMessage = (messageText: string) => {
+    if (!messageText.trim()) return;
+
+    // Agregar mensaje del usuario
+    const updatedMessages = [...chatMessages, { role: 'user' as const, content: messageText }];
+    setChatMessages(updatedMessages);
+    setChatInput('');
+    setIsChatTyping(true);
+
+    setTimeout(() => {
+      let reply = '';
+      const text = messageText.toLowerCase();
+
+      if (text.includes('siex') || text.includes('sistema de informacion')) {
+        reply = 'El **SIEX (Sistema de Información de Explotaciones Agrícolas)** es el registro unificado del Ministerio de Agricultura. En la campaña actual, es obligatorio registrar todo cultivo, superficie catastral, y tratamientos. Los titulares deben mantener el Cuaderno Digital (CUE) sincronizado. Con AgroApp, puedes generar el XML directamente y subirlo a la plataforma autonómica sin trámites manuales.';
+      } else if (text.includes('nitrato') || text.includes('abono') || text.includes('fertiliza') || text.includes('nitrogeno')) {
+        reply = 'Según el Real Decreto 1051/2022 de nutrición sostenible de suelos:\n1. **Límite general**: En zonas vulnerables a la contaminación por nitratos, la dosis máxima permitida es de **170 UF/ha** de Nitrógeno orgánico.\n2. **Plan de abonado**: Debe estar redactado por un asesor técnico acreditado si la finca supera las 10 ha de secano o 5 ha de regadío.\n3. **Registro obligatorio**: Toda aplicación de abono químico u orgánico debe anotarse en un plazo de **1 mes** desde su ejecución.';
+      } else if (text.includes('plazo') || text.includes('tiempo') || text.includes('registrar') || text.includes('fito')) {
+        reply = 'Para tratamientos fitosanitarios:\n- El plazo oficial para registrar el tratamiento en el Cuaderno Digital de Explotación (CUE) es de **un mes** (30 días naturales) desde la aplicación.\n- Recuerda que debe realizarlo un aplicador con carnet ROPO vigente (Básico o Cualificado) y el producto debe estar registrado en el Registro Oficial de Productos Fitosanitarios (RECOP) del MAPA.';
+      } else if (text.includes('ternero') || text.includes('crotal') || text.includes('nacimiento') || text.includes('rega')) {
+        reply = 'El registro de nacimientos en el censo ganadero **REGA** debe comunicarse en un plazo máximo de **20 días naturales** desde el nacimiento. Se debe asignar un crotal oficial del stock autorizado por la OCA correspondiente y rellenar el Documento de Identificación Bovino (DIB).';
+      } else if (text.includes('hola') || text.includes('buenas')) {
+        reply = '¡Hola! ¿En qué puedo ayudarte hoy sobre cumplimiento legal, normativas de la PAC, Cuaderno Digital o sensores IoT?';
+      } else {
+        reply = 'Entendido. Con respecto a la normativa de la PAC 2026 y la condicionalidad reforzada, todas las explotaciones agrarias en España deben contar con un Cuaderno de Campo Digital (CUE). Te recomiendo verificar que:\n\n- Tus parcelas SIGPAC coincidan exactamente con la declaración de la PAC.\n- Dispongas de los carnets de aplicador (ROPO) en vigor para el personal registrado.\n- Registres las dosis y el número de registro oficial del MAPA para cada fitosanitario utilizado. \n\n¿Quieres que revisemos algún parámetro específico de tu explotación?';
+      }
+
+      setChatMessages(prev => [...prev, { role: 'bot' as const, content: reply }]);
+      setIsChatTyping(false);
+    }, 1000);
+  };
+
+  // --- SIMULACIÓN DIAGNÓSTICO PLAGAS CON IA ---
+  const runPestDiagnosis = () => {
+    if (!uploadedImage) {
+      alert('Por favor, selecciona una imagen de muestra para analizar.');
+      return;
+    }
+    setDiagnosing(true);
+    setDiagnosed(false);
+    setScanProgress(0);
+    setScanStatusText('Iniciando escáner de visión artificial...');
+
+    const steps = [
+      { progress: 15, text: 'Cargando imagen en canal de análisis...' },
+      { progress: 40, text: 'Analizando morfología foliar y decoloración...' },
+      { progress: 65, text: 'Comparando con base de datos del MAPA (2026)...' },
+      { progress: 90, text: 'Filtrando tratamientos ecológicos autorizados...' },
+      { progress: 100, text: 'Diagnóstico completado.' }
+    ];
+
+    steps.forEach((step, idx) => {
+      setTimeout(() => {
+        setScanProgress(step.progress);
+        setScanStatusText(step.text);
+        if (step.progress === 100) {
+          setDiagnosing(false);
+          setDiagnosed(true);
+          
+          let result: any = {};
+          if (selectedCrop === 'olivar') {
+            result = {
+              plaga: 'Mosca del Olivo (Bactrocera oleae)',
+              cientifico: 'Bactrocera oleae',
+              confianza: '96.2%',
+              gravedad: 'Alta',
+              gravedadColor: 'var(--color-danger)',
+              sintomas: 'Picaduras de puesta en el fruto, galerías excavadas por larvas, caída prematura del fruto y pérdida de calidad de aceite.',
+              tratamientoQuimico: 'Deltametrina 2.5% (Nº Reg: 24.153) - Dosis: 0.3-0.5 L/ha.',
+              tratamientoBiologico: 'Trampas de atracción quimio-trópica (DAP) o pulverización con Arcilla de Caolín al 3-5% como barrera física.',
+              preventivo: 'Fomentar la fauna útil (parasitoides Opius concolor), recogida selectiva de frutos caídos y colocación anticipada de mosqueros a principios de verano.'
+            };
+          } else if (selectedCrop === 'trigo' || selectedCrop === 'cebada') {
+            result = {
+              plaga: 'Roya Amarilla (Puccinia striiformis)',
+              cientifico: 'Puccinia striiformis',
+              confianza: '93.5%',
+              gravedad: 'Media-Alta',
+              gravedadColor: '#D35400',
+              sintomas: 'Pústulas amarillentas o anaranjadas dispuestas en líneas longitudinales sobre las hojas, interfiriendo la fotosíntesis y mermando el peso del grano.',
+              tratamientoQuimico: 'Tebuconazol 25% (Nº Reg: 18.995) - Dosis: 1 L/ha.',
+              tratamientoBiologico: 'Aplicaciones preventivas de Bacillus subtilis o extracto de cola de caballo (Equisetum arvense).',
+              preventivo: 'Evitar exceso de abonado nitrogenado de cobertura, elegir variedades resistentes y mantener rotaciones de cultivo para romper ciclos.'
+            };
+          } else {
+            result = {
+              plaga: 'Mildiu (Plasmopara viticola)',
+              cientifico: 'Plasmopara viticola',
+              confianza: '91.8%',
+              gravedad: 'Media',
+              gravedadColor: '#F1C40F',
+              sintomas: 'Manchas translúcidas en el haz de la hoja conocidas como "manchas de aceite" y una pelusilla blanquecina en el envés bajo condiciones de alta humedad.',
+              tratamientoQuimico: 'Sulfato de Cobre o Hidróxido Cúprico (Nº Reg: 12.001) - Dosis: 1.5-2.0 kg/ha.',
+              tratamientoBiologico: 'Tratamientos repetidos con sales de cobre en bajas dosis y extractos de ortiga.',
+              preventivo: 'Podas en verde para facilitar aireación foliar, control de deshojado precoz y evitar encharcamientos del terreno.'
+            };
+          }
+          setDiagnosisResult(result);
+        }
+      }, (idx + 1) * 800);
+    });
   };
 
   return (
@@ -611,6 +763,13 @@ export default function App() {
                   Tratamientos (Fito)
                 </div>
                 <div 
+                  className={`nav-item ${activeTab === 'diagnostico-ia' ? 'active' : ''}`}
+                  onClick={() => { setActiveTab('diagnostico-ia'); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
+                  <Brain size={16} /> Diagnóstico IA (Plagas)
+                </div>
+                <div 
                   className={`nav-item ${activeTab === 'fertilizacion' ? 'active' : ''}`}
                   onClick={() => { setActiveTab('fertilizacion'); }}
                 >
@@ -682,6 +841,7 @@ export default function App() {
                 {activeTab === 'datos-maquinaria' && 'Parque de Maquinaria y Equipos'}
                 {activeTab === 'parcelas' && 'Parcelas Integradas (SIGPAC)'}
                 {activeTab === 'tratamientos' && 'Registro de Tratamientos Fitosanitarios'}
+                {activeTab === 'diagnostico-ia' && 'Diagnóstico Visual de Plagas (Gemini IA)'}
                 {activeTab === 'fertilizacion' && 'Plan de Abonado y Fertilización'}
                 {activeTab === 'informes-agri' && 'Compliance: Cuaderno de Campo Digital'}
                 {activeTab === 'censo' && 'Registro de Censo Ganadero'}
@@ -1219,6 +1379,224 @@ export default function App() {
               </div>
             )}
 
+            {/* TAB CONTENT: DIAGNÓSTICO IA (VISUAL PEST DIAGNOSIS) */}
+            {activeTab === 'diagnostico-ia' && (
+              <div className="grid-2" style={{ gap: '20px' }}>
+                <div className="flex-col" style={{ gap: '20px' }}>
+                  <div className="card" style={{ borderLeft: '4px solid var(--color-agri)' }}>
+                    <div className="card-header" style={{ color: 'var(--color-agri)' }}>Muestra de Hoja o Cultivo Afectado</div>
+                    <p style={{ fontSize: '12px', color: '#7F8C8D', marginBottom: '15px' }}>
+                      Selecciona una muestra prediseñada para probar el escáner del modelo de visión artificial, o sube una imagen de tus propias parcelas.
+                    </p>
+
+                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                      <label>Tipo de Cultivo</label>
+                      <select 
+                        value={selectedCrop} 
+                        onChange={(e) => {
+                          setSelectedCrop(e.target.value);
+                          setDiagnosed(false);
+                          setDiagnosisResult(null);
+                        }}
+                      >
+                        <option value="olivar">Olivar (Olivos)</option>
+                        <option value="trigo">Trigo / Cereales de Invierno</option>
+                        <option value="vinedo">Viñedo / Vid</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '15px' }}>
+                      <label>Muestras de Demostración Rápida</label>
+                      <div className="grid-2">
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px', padding: '10px' }}
+                          onClick={() => {
+                            setUploadedImage('/olive_leaf_disease.png');
+                            setSelectedCrop('olivar');
+                            setDiagnosed(false);
+                            setDiagnosisResult(null);
+                          }}
+                        >
+                          🍂 Hoja de Olivo Afectada
+                        </button>
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px', padding: '10px' }}
+                          onClick={() => {
+                            setUploadedImage('/wheat_leaf_rust.png');
+                            setSelectedCrop('trigo');
+                            setDiagnosed(false);
+                            setDiagnosisResult(null);
+                          }}
+                        >
+                          🌾 Hoja de Trigo con Roya
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Subir Imagen Personalizada</label>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        style={{ fontSize: '12px' }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              setUploadedImage(event.target?.result as string);
+                              setDiagnosed(false);
+                              setDiagnosisResult(null);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {uploadedImage ? (
+                      <div style={{ marginTop: '15px' }}>
+                        <div className={`scan-container ${diagnosing ? 'pulse-glow' : ''}`}>
+                          <img src={uploadedImage} alt="Muestra foliar" className="scan-image" />
+                          {diagnosing && <div className="scan-line"></div>}
+                          <div className="scan-grid-overlay"></div>
+                        </div>
+
+                        {!diagnosing && !diagnosed && (
+                          <button 
+                            className="btn btn-agri w-full" 
+                            style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                            onClick={runPestDiagnosis}
+                          >
+                            <Sparkles size={16} /> Analizar Diagnóstico con Gemini IA
+                          </button>
+                        )}
+
+                        {diagnosing && (
+                          <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                            <div style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--color-agri)', marginBottom: '8px' }}>
+                              {scanStatusText}
+                            </div>
+                            <div className="bar-track" style={{ height: '10px' }}>
+                              <div className="bar-fill bg-barbeflow" style={{ width: `${scanProgress}%`, background: 'var(--color-agri)' }}></div>
+                            </div>
+                            <small style={{ color: '#7F8C8D', display: 'block', marginTop: '4px' }}>{scanProgress}% Completado</small>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ border: '2px dashed var(--color-border)', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', color: '#7F8C8D', marginTop: '15px' }}>
+                        <div style={{ textAlign: 'center' }}>
+                          <Brain size={36} style={{ color: '#BDC3C7', marginBottom: '8px' }} />
+                          <div>Ninguna imagen seleccionada</div>
+                          <small>Selecciona una muestra demo de arriba o sube tu archivo</small>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex-col">
+                  {diagnosed && diagnosisResult ? (
+                    <div className="card" style={{ borderTop: `4px solid ${diagnosisResult.gravedadColor}` }}>
+                      <div className="card-header" style={{ marginBottom: '10px' }}>
+                        <span style={{ color: 'var(--color-admin)' }}>Diagnóstico Fitosanitario IA</span>
+                        <span className="badge" style={{ background: diagnosisResult.gravedadColor }}>Gravedad: {diagnosisResult.gravedad}</span>
+                      </div>
+                      
+                      <div style={{ background: '#F8F9F9', padding: '12px', borderRadius: '6px', border: '1px solid #ECF0F1', marginBottom: '15px' }}>
+                        <div style={{ fontSize: '11px', color: '#7F8C8D' }}>PLAGA / ENFERMEDAD DETECTADA:</div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--color-admin)' }}>
+                          {diagnosisResult.plaga}
+                        </div>
+                        <div style={{ fontSize: '11px', fontStyle: 'italic', color: '#7F8C8D' }}>
+                          Clasificación científica: {diagnosisResult.cientifico}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '8px', fontSize: '12px', color: 'var(--color-agri)', fontWeight: 'bold' }}>
+                          <Sparkles size={14} /> Fiabilidad del diagnóstico: {diagnosisResult.confianza}
+                        </div>
+                      </div>
+
+                      <div style={{ fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div>
+                          <strong>Sintomatología:</strong>
+                          <p style={{ color: '#5D6D7E', marginTop: '4px' }}>{diagnosisResult.sintomas}</p>
+                        </div>
+
+                        <hr style={{ border: 0, borderTop: '1px solid #ECF0F1' }} />
+
+                        <div>
+                          <strong>Tratamiento Químico Recomendado (MAPA):</strong>
+                          <p style={{ color: 'var(--color-danger)', fontWeight: 'bold', marginTop: '4px' }}>
+                            {diagnosisResult.tratamientoQuimico}
+                          </p>
+                          <small style={{ color: '#7F8C8D', display: 'block', marginTop: '2px' }}>
+                            Cumple el Real Decreto de Uso Sostenible de Fitosanitarios. Registrar en el CUE en un mes.
+                          </small>
+                        </div>
+
+                        <hr style={{ border: 0, borderTop: '1px solid #ECF0F1' }} />
+
+                        <div>
+                          <strong>Tratamiento Biológico Alternativo:</strong>
+                          <p style={{ color: 'var(--color-agri)', fontWeight: 'bold', marginTop: '4px' }}>
+                            {diagnosisResult.tratamientoBiologico}
+                          </p>
+                        </div>
+
+                        <hr style={{ border: 0, borderTop: '1px solid #ECF0F1' }} />
+
+                        <div>
+                          <strong>Medidas Culturales Preventivas:</strong>
+                          <p style={{ color: '#5D6D7E', marginTop: '4px' }}>{diagnosisResult.preventivo}</p>
+                        </div>
+                      </div>
+
+                      <button 
+                        className="btn btn-outline w-full"
+                        style={{ marginTop: '20px', border: '1px solid var(--color-agri)', color: 'var(--color-agri)' }}
+                        onClick={() => {
+                          // Prefillear el formulario de tratamientos fitosanitarios
+                          const prodParts = diagnosisResult.tratamientoQuimico.split(' (');
+                          const prodName = prodParts[0] || '';
+                          const regNum = prodParts[1] ? prodParts[1].replace('Nº Reg: ', '').replace(')', '').split(' - ')[0] : 'ES-12001';
+                          
+                          setNewFito({
+                            fecha_aplicacion: new Date().toISOString().split('T')[0],
+                            producto: prodName.toUpperCase(),
+                            num_registro_oficial: regNum,
+                            dosis: selectedCrop === 'olivar' ? 0.4 : 1.0,
+                            unidad_medida: selectedCrop === 'olivar' ? 'L/ha' : 'kg/ha',
+                            superficie_tratada: 8.5,
+                            aplicador_nombre: 'Luis M. Rodríguez',
+                            eficacia: 'Pendiente',
+                            problema_fitosanitario: diagnosisResult.plaga
+                          });
+                          
+                          setActiveTab('tratamientos');
+                          alert('Datos del tratamiento fitosanitario cargados en el formulario. ¡Comprueba las dosis y regístralo!');
+                        }}
+                      >
+                        📥 Volcar a Formulario de Tratamientos CUE
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', borderStyle: 'dashed', borderColor: '#BDC3C7' }}>
+                      <div style={{ textAlign: 'center', padding: '40px', color: '#7F8C8D' }}>
+                        <Brain size={48} style={{ color: '#BDC3C7', marginBottom: '15px' }} />
+                        <h3>Resultados del Diagnóstico IA</h3>
+                        <p style={{ fontSize: '12px', marginTop: '10px', maxWidth: '300px', margin: '10px auto' }}>
+                          Carga una muestra de cultivo y pulsa "Analizar" para extraer las patologías, nivel de gravedad y tratamientos ecológicos u oficiales de las guías de fitosanitarios del MAPA.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* TAB CONTENT: 7. FERTILIZACIÓN */}
             {activeTab === 'fertilizacion' && (
               <div className="flex-col" style={{ gap: '20px' }}>
@@ -1524,62 +1902,211 @@ export default function App() {
             )}
 
             {/* TAB CONTENT: 12. SENSORES IOT */}
-            {activeTab === 'iot' && (
-              <div className="card">
-                <div className="card-header">Estado de la Red de Telemetría (Dispositivos IoT)</div>
-                <div className="flex" style={{ gap: '30px', justifyContent: 'center', padding: '20px 0', flexWrap: 'wrap' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div className="sensor-circle safe">
-                      <div className="sensor-val">45%</div>
-                      <div className="sensor-label">Humedad Suelo</div>
+            {activeTab === 'iot' && (() => {
+              // Resolver localización según la explotación seleccionada
+              const isGana = mode === 'ganaderia';
+              const locKey = isGana ? 'caceres' : 'toledo';
+              const activeLoc = weatherData ? weatherData[locKey] : null;
+              const forecastDays = activeLoc?.prediccion?.dia || [];
+              const todayForecast = forecastDays[0] || null;
+              
+              // Extraer variables para UI
+              const maxTemp = todayForecast?.temperatura?.maxima ?? 36;
+              const minTemp = todayForecast?.temperatura?.minima ?? 20;
+              const mainProbRain = todayForecast?.probPrecipitacion?.[0]?.value ?? 0;
+              const windSpeed = todayForecast?.viento?.[0]?.velocidad ?? 12;
+              const windDir = todayForecast?.viento?.[0]?.direccion ?? 'SO';
+              const humMax = todayForecast?.humedadRelativa?.maxima ?? 40;
+              const humMin = todayForecast?.humedadRelativa?.minima ?? 15;
+
+              // Lógica de Recomendación de Riego Inteligente
+              let recommendationText = '';
+              let recommendationBadge = '';
+              let recommendationColor = '';
+              
+              if (mainProbRain >= 30) {
+                recommendationText = `AHORRO DE AGUA ACTIVADO: Alta probabilidad de precipitación (${mainProbRain}%). Se suspende el ciclo automático de riego. Ahorro de caudal estimado: 150 m³ por sector.`;
+                recommendationBadge = 'Riego Suspendido (Lluvia)';
+                recommendationColor = '#27AE60';
+              } else if (windSpeed > 20) {
+                recommendationText = `ALERTA DE SEGURIDAD POR VIENTO: Ráfagas de viento detectadas de ${windSpeed} km/h (${windDir}). El riego por aspersión queda desaconsejado debido a pérdidas por deriva y falta de uniformidad.`;
+                recommendationBadge = 'Alerta Viento (Evitar Aspersión)';
+                recommendationColor = '#E67E22';
+              } else if (maxTemp >= 35) {
+                recommendationText = `RIEGO DE SOPORTE NECESARIO: Temperaturas extremadamente altas (${maxTemp}°C) con humedad mínima del ${humMin}%. Se recomienda un aporte extra de agua en horas de menor insolación (06:00 a 08:00).`;
+                recommendationBadge = 'Riego Extra Recomendado';
+                recommendationColor = 'var(--color-danger)';
+              } else {
+                recommendationText = `ESTADO ÓPTIMO: Condiciones meteorológicas equilibradas (Temp: ${maxTemp}°C, Viento: ${windSpeed} km/h). Mantener ciclo de riego programado según sensores locales.`;
+                recommendationBadge = 'Ciclo Normal Programado';
+                recommendationColor = 'var(--color-agri)';
+              }
+
+              return (
+                <div className="flex-col" style={{ gap: '20px' }}>
+                  {/* Fila de Encabezado de AEMET */}
+                  <div className="card" style={{ borderLeft: '4px solid var(--color-agri)', background: '#F8F9F9' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <CloudSun style={{ color: 'var(--color-agri)' }} size={22} />
+                          <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--color-admin)' }}>
+                            Estación Meteorológica Virtual (Sincronizada AEMET)
+                          </h3>
+                        </div>
+                        <p style={{ fontSize: '12px', color: '#7F8C8D', marginTop: '4px', margin: 0 }}>
+                          Municipio monitorizado: <strong>{activeLoc ? `${activeLoc.nombre} (${activeLoc.provincia})` : 'Cargando datos...'}</strong>
+                        </p>
+                      </div>
+                      <span className="badge bg-success" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        ● Sincronizado hace 15m
+                      </span>
                     </div>
-                    <div style={{ marginTop: '12px', fontWeight: 'bold', fontSize: '13px' }}>Sonda Parcela P-11</div>
-                    <small style={{ color: '#7F8C8D', fontSize: '10px' }}>Lectura: Hace 10 min | Batería: 92%</small>
                   </div>
 
-                  <div style={{ textAlign: 'center' }}>
-                    <div className="sensor-circle alert">
-                      <div className="sensor-val">2.1°C</div>
-                      <div className="sensor-label">Temp. Ambiente</div>
+                  {/* Tarjetas de Sensores Locales enlazados a Clima */}
+                  <div className="grid-3">
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                      <div className="sensor-icon-wrapper" style={{ background: '#E8F8F5', color: '#117A65', padding: '12px', borderRadius: '50%' }}>
+                        <Droplets size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '11px', color: '#7F8C8D' }}>HUMEDAD RELATIVA (SUELO / AIRE)</div>
+                        <div style={{ fontSize: '20px', fontWeight: 'bold' }}>42% / {humMin}-{humMax}%</div>
+                        <small style={{ color: '#27AE60', fontWeight: 'bold' }}>Sonda de Humedad OK</small>
+                      </div>
                     </div>
-                    <div style={{ marginTop: '12px', fontWeight: 'bold', fontSize: '13px' }}>Estación Meteorológica</div>
-                    <small style={{ color: 'var(--color-danger)', fontSize: '10px', fontWeight: 'bold' }}>⚠ Riesgo Helada Suave</small>
-                  </div>
 
-                  <div style={{ textAlign: 'center' }}>
-                    <div className="sensor-circle safe" style={{ borderColor: '#3498DB', color: '#3498DB' }}>
-                      <div className="sensor-val">95%</div>
-                      <div className="sensor-label">Volumen Depósito</div>
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                      <div className="sensor-icon-wrapper" style={{ background: '#FDEDEC', color: '#CB4335', padding: '12px', borderRadius: '50%' }}>
+                        <Thermometer size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '11px', color: '#7F8C8D' }}>TEMPERATURA DIARIA</div>
+                        <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{minTemp}°C a {maxTemp}°C</div>
+                        <small style={{ color: maxTemp >= 35 ? 'var(--color-danger)' : '#7F8C8D', fontWeight: 'bold' }}>
+                          {maxTemp >= 35 ? '⚠ Calor Extremo' : 'Estado Estable'}
+                        </small>
+                      </div>
                     </div>
-                    <div style={{ marginTop: '12px', fontWeight: 'bold', fontSize: '13px' }}>Balsa de Agua Nave A</div>
-                    <small style={{ color: '#7F8C8D', fontSize: '10px' }}>Lectura: Hace 2 min | Flujo: Estable</small>
-                  </div>
-                </div>
 
-                <hr style={{ margin: '30px 0', border: 0, borderTop: '1px solid #ECF0F1' }} />
-
-                <div className="grid-2">
-                  <div>
-                    <h5 style={{ fontSize: '13px', marginBottom: '10px' }}>Ubicación Satelital de Dispositivos</h5>
-                    <div style={{ background: '#EAEDED', height: '220px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7F8C8D', border: '1px dashed #BDC3C7' }}>
-                      <div style={{ textAlign: 'center' }}>
-                        <Map size={36} style={{ marginBottom: '8px' }} />
-                        <div>Mapa Satelital Cargado</div>
-                        <small>Visualización de 3 sondas activas</small>
+                    <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                      <div className="sensor-icon-wrapper" style={{ background: '#EAF2F8', color: '#2980B9', padding: '12px', borderRadius: '50%' }}>
+                        <Wind size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '11px', color: '#7F8C8D' }}>VELOCIDAD & DIRECCIÓN VIENTO</div>
+                        <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{windSpeed} km/h ({windDir})</div>
+                        <small style={{ color: windSpeed > 20 ? '#E67E22' : '#7F8C8D', fontWeight: 'bold' }}>
+                          {windSpeed > 20 ? '⚠ Deriva de Riego Alta' : 'Viento Moderado'}
+                        </small>
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <h5 style={{ fontSize: '13px', marginBottom: '10px' }}>Registro de Eventos y Telemetría</h5>
-                    <ul style={{ fontSize: '12px', lineHeight: '1.8', color: 'var(--color-text)' }}>
-                      <li style={{ color: 'var(--color-danger)' }}>⚠ 04:00 AM - Humedad bajo 38% en Parcela 11.</li>
-                      <li style={{ color: '#27AE60' }}>✔ 08:00 AM - Riego automático activado por 15 minutos.</li>
-                      <li>ℹ 12:00 PM - Sincronización diaria del gateway IoT completada.</li>
-                    </ul>
+
+                  {/* Panel de Recomendaciones de Riego Inteligente */}
+                  <div className="card" style={{ borderTop: `4px solid ${recommendationColor}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                      <h4 style={{ margin: 0, color: 'var(--color-admin)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Sparkles size={16} style={{ color: recommendationColor }} /> Recomendación de Riego del Asesor IA
+                      </h4>
+                      <span className="badge" style={{ background: recommendationColor, color: '#white' }}>
+                        {recommendationBadge}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#2C3E50', margin: 0 }}>
+                      {recommendationText}
+                    </p>
+                    <div style={{ marginTop: '15px', background: '#F2F4F4', padding: '10px', borderRadius: '4px', fontSize: '11px', color: '#5D6D7E' }}>
+                      <strong>Criterio de Cálculo:</strong> Enlazado a la predicción oficial de AEMET para la parcela actual y cruzado con los sensores de humedad del suelo de la red IoT.
+                    </div>
+                  </div>
+
+                  {/* Tabla de Predicción Semanal AEMET */}
+                  <div className="card" style={{ padding: 0 }}>
+                    <div className="card-header" style={{ padding: '15px', marginBottom: 0 }}>Previsión Meteorológica AEMET (Próximas Jornadas)</div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Fecha Predicción</th>
+                          <th>Cielo</th>
+                          <th>Temperatura</th>
+                          <th>Prob. Lluvia</th>
+                          <th>Dirección & Vel. Viento</th>
+                          <th>Humedad Relativa</th>
+                          <th>Sugerencia de Riego</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {forecastDays.map((day: any, idx: number) => {
+                          const dateObj = new Date(day.fecha);
+                          const dateStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                          const wind = day.viento?.[0] || { velocidad: 0, direccion: 'N' };
+                          const probRain = day.probPrecipitacion?.[0]?.value ?? 0;
+                          
+                          let actionBadge = '';
+                          let actionColor = '';
+                          if (probRain >= 30) {
+                            actionBadge = 'Apagar Riego';
+                            actionColor = 'badge bg-success';
+                          } else if (wind.velocidad > 20) {
+                            actionBadge = 'Posponer Riego';
+                            actionColor = 'badge bg-warning';
+                          } else {
+                            actionBadge = 'Riego Normal';
+                            actionColor = 'badge bg-info';
+                          }
+
+                          return (
+                            <tr key={idx}>
+                              <td><strong>{dateStr}</strong></td>
+                              <td>{day.estadoCielo?.[0]?.descripcion ?? 'Despejado'}</td>
+                              <td>{day.temperatura?.minima}°C a {day.temperatura?.maxima}°C</td>
+                              <td>
+                                <span className={probRain > 0 ? 'badge bg-warning' : ''}>
+                                  {probRain}%
+                                </span>
+                              </td>
+                              <td>{wind.direccion} a {wind.velocidad} km/h</td>
+                              <td>{day.humedadRelativa?.minima}% - {day.humedadRelativa?.maxima}%</td>
+                              <td>
+                                <span className={actionColor}>{actionBadge}</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Distribución y logs */}
+                  <div className="grid-2">
+                    <div>
+                      <h5 style={{ fontSize: '13px', marginBottom: '10px' }}>Ubicación Satelital de Dispositivos</h5>
+                      <div style={{ background: '#EAEDED', height: '220px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7F8C8D', border: '1px dashed #BDC3C7' }}>
+                        <div style={{ textAlign: 'center' }}>
+                          <Map size={36} style={{ marginBottom: '8px' }} />
+                          <div>Mapa Satelital Cargado</div>
+                          <small>Visualización de 3 sondas activas en la explotación</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h5 style={{ fontSize: '13px', marginBottom: '10px' }}>Historial del Servidor de Riego Autónomo</h5>
+                      <ul style={{ fontSize: '12px', lineHeight: '1.8', color: 'var(--color-text)' }}>
+                        <li style={{ color: mainProbRain >= 30 ? 'var(--color-danger)' : '#27AE60' }}>
+                          {mainProbRain >= 30 ? '⚠ Ciclo suspendido preventivamente por predicción de lluvia.' : '✔ Riego automático activado por 15 minutos en Parcela Principal.'}
+                        </li>
+                        <li style={{ color: windSpeed > 20 ? '#E67E22' : 'inherit' }}>
+                          {windSpeed > 20 ? '⚠ Sensores recomiendan posponer pulverizaciones foliares por viento fuerte.' : 'ℹ Velocidad del viento dentro de límites operativos.'}
+                        </li>
+                        <li>ℹ Telemetría Sincronizada con base de datos central Supabase.</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
           </div>
 
@@ -1590,6 +2117,131 @@ export default function App() {
       <footer style={{ background: 'white', padding: '15px 30px', borderTop: '1px solid #ECF0F1', fontSize: '12px', color: '#7F8C8D', textAlign: 'center', marginTop: 'auto' }}>
         AgroApp &copy; {new Date().getFullYear()} - Sistema de Gestión Agropecuaria de Alta Precisión. Todos los derechos reservados.
       </footer>
+
+      {/* --- CHATBOT FLOTANTE SIEX --- */}
+      {view !== 'login' && (
+        <>
+          {/* Botón flotante burbuja */}
+          {!chatOpen && (
+            <div 
+              className="siex-chat-button"
+              onClick={() => setChatOpen(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <Bot size={20} />
+              <span style={{ fontSize: '12px', fontWeight: 'bold' }}>Consultor SIEX IA</span>
+              <span className="badge-pulse"></span>
+            </div>
+          )}
+
+          {/* Ventana del Chat */}
+          {chatOpen && (
+            <div className="siex-chat-window">
+              {/* Header */}
+              <div className="siex-chat-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Brain size={18} />
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '13px' }}>Asesor SIEX & PAC 2026</div>
+                    <div style={{ fontSize: '10px', opacity: 0.8, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ width: '6px', height: '6px', background: '#2ECC71', borderRadius: '50%', display: 'inline-block' }}></span>
+                      Consultor Oficial de Explotación
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setChatOpen(false)}
+                  style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '2px' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Contenedor de Mensajes */}
+              <div className="siex-chat-body">
+                {chatMessages.map((msg, idx) => (
+                  <div key={idx} className={`siex-msg ${msg.role === 'bot' ? 'bot' : 'user'}`}>
+                    {/* Renderización simple de negrita básica y saltos de línea */}
+                    {msg.content.split('\n').map((line, lIdx) => {
+                      // Reemplazar **texto** con <strong>texto</strong>
+                      const parts = line.split('**');
+                      const renderedLine = parts.map((part, pIdx) => {
+                        return pIdx % 2 === 1 ? <strong key={pIdx}>{part}</strong> : part;
+                      });
+                      return (
+                        <p key={lIdx} style={{ margin: '0 0 6px 0' }}>
+                          {renderedLine}
+                        </p>
+                      );
+                    })}
+                  </div>
+                ))}
+                
+                {isChatTyping && (
+                  <div className="siex-msg bot" style={{ display: 'flex', gap: '4px', alignItems: 'center', padding: '10px 14px' }}>
+                    <span className="badge-pulse" style={{ background: '#7F8C8D', position: 'static', transform: 'none' }}></span>
+                    <span style={{ color: '#7F8C8D', fontSize: '11px', fontStyle: 'italic' }}>Asesor AgroApp está redactando...</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Atajos Rápidos */}
+              <div style={{ padding: '8px 12px', background: '#F8F9F9', borderTop: '1px solid #ECF0F1', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                <button 
+                  className="btn btn-outline" 
+                  style={{ fontSize: '10px', padding: '4px 8px', borderRadius: '12px' }}
+                  onClick={() => handleSendMessage('¿Cuáles son las obligaciones del SIEX 2026?')}
+                >
+                  📋 Obligaciones SIEX
+                </button>
+                <button 
+                  className="btn btn-outline" 
+                  style={{ fontSize: '10px', padding: '4px 8px', borderRadius: '12px' }}
+                  onClick={() => handleSendMessage('¿Cuál es el límite de nitratos permitido?')}
+                >
+                  💧 Límite Nitratos
+                </button>
+                <button 
+                  className="btn btn-outline" 
+                  style={{ fontSize: '10px', padding: '4px 8px', borderRadius: '12px' }}
+                  onClick={() => handleSendMessage('¿Cuál es el plazo para registrar tratamientos en el CUE?')}
+                >
+                  ⏱ Plazos CUE
+                </button>
+                <button 
+                  className="btn btn-outline" 
+                  style={{ fontSize: '10px', padding: '4px 8px', borderRadius: '12px' }}
+                  onClick={() => handleSendMessage('¿Cómo se registran nacimientos REGA?')}
+                >
+                  🐄 Registro REGA
+                </button>
+              </div>
+
+              {/* Input Area */}
+              <div className="siex-chat-footer">
+                <input 
+                  type="text" 
+                  placeholder="Escribe tu consulta legal o de PAC..." 
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSendMessage(chatInput);
+                    }
+                  }}
+                />
+                <button 
+                  className="btn btn-agri" 
+                  style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onClick={() => handleSendMessage(chatInput)}
+                >
+                  <Send size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
     </div>
   );

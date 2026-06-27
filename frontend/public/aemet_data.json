@@ -1,0 +1,134 @@
+{
+  "toledo": {
+    "nombre": "Alcaudete de la Jara",
+    "provincia": "Toledo",
+    "prediccion": {
+      "dia": [
+        {
+          "fecha": "2026-06-27T00:00:00",
+          "temperatura": {
+            "maxima": 36,
+            "minima": 20
+          },
+          "probPrecipitacion": [
+            {
+              "value": 0,
+              "periodo": "00-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "SO",
+              "velocidad": 10
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 40,
+            "minima": 15
+          }
+        },
+        {
+          "fecha": "2026-06-28T00:00:00",
+          "temperatura": {
+            "maxima": 35,
+            "minima": 20
+          },
+          "probPrecipitacion": [
+            {
+              "value": 30,
+              "periodo": "00-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Intervalos nubosos",
+              "value": "13"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "O",
+              "velocidad": 25
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 55,
+            "minima": 15
+          }
+        }
+      ]
+    }
+  },
+  "caceres": {
+    "nombre": "Trujillo",
+    "provincia": "Cáceres",
+    "prediccion": {
+      "dia": [
+        {
+          "fecha": "2026-06-27T00:00:00",
+          "temperatura": {
+            "maxima": 38,
+            "minima": 22
+          },
+          "probPrecipitacion": [
+            {
+              "value": 0,
+              "periodo": "00-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "E",
+              "velocidad": 15
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 30,
+            "minima": 10
+          }
+        },
+        {
+          "fecha": "2026-06-28T00:00:00",
+          "temperatura": {
+            "maxima": 39,
+            "minima": 23
+          },
+          "probPrecipitacion": [
+            {
+              "value": 5,
+              "periodo": "00-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "NE",
+              "velocidad": 15
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 35,
+            "minima": 12
+          }
+        }
+      ]
+    }
+  }
+}
