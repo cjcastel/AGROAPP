@@ -1,0 +1,74 @@
+,MODULOS,,SUBMODULOS I,Detalle,observaciones,,,última Actualización: 24/11/2025 
+AGRICULTURA,AGRICULTURA,,cereal,"trigo
+cebada",agricultura tradicional,,,
+,,,plantación,"olivo
+almendro
+pistacho
+viña",arboles y plantas,,,
+GANADERIA,GANADERIA,,vacuno,,,,,
+,,,ovino,,,,,
+,,,porcino,,,,,
+,,,equino,,,,,
+,,,,,,,,
+,,,,AGRUCULTURA,,,GANADERIA,
+,FUNCIONALIDADES,Opcion descargabe en xls/pdf,"BASICA 
+(incluida en version gratuita GOB)",PREMIUM,ADD-ONs,BASICA,PREMIUM,ADD-ONs
+EXPLOTACONES,Listado Explotaciones,,,x,,,x,
+DATOS,Datos generales (explotacion),,x,,,x,,
+,Empleados,,x,,,x,,
+,Edificios e Instalaciones,,x,,,x,,
+,Maquinaria / Vehiculos,,x,,,x,,
+,Usuarios autorizados (explotación),,x,,,x,,
+,Aplicadores (productos),,x,,,x,,
+,CLIENTES,,,x,,,x,
+,PROVEEDORES,,,x,,,x,
+,TRANSPORTISTAS,,,,,x,,
+,"ASOCIACIONES (ganaderas, veterinarias)",,,,,,,
+PARCELAS,Parcelas (datos SIGPAC),,x,,,x,,
+TRATAMIENTOS,Fitosanitarios,,x,,,,,
+,Fertilización,,x,,,,,
+,"Otros tratamientos (bioestimulantes, herbicinas, ...)",,x,,,,,
+OTRAS ACTIVIDADES,Cosecha /Recolección / Siega,,x,,,,,
+,Siembra / Plantación,,x,,,,,
+,Pastoreo,,x,,,x,,
+,Riego,,x,,,,,
+,Cubierta vegetal (sembrada/inerte),,x,,,,,
+ANALITICAS,Muestras,,,x,,,,
+CENSO,Listado de animales,,,,,x,,
+IDENTIFICACIÓN,Crotales sin dar de alta,,,,,x,,
+ACTIVIDAD,Nacimiento,,,,,x,,
+,Muerte,,,,,x,,
+,Compra,,,,,x,,
+,Venta,,,,,x,,
+,Incidencia,,,,,x,,
+ALIMENTACION,Compra /Alimento propio,,,,,x,,
+MEDICAMENTOS,Compra /prescripción,,,,,x,,
+SANIDAD,Veterinarios (explotación),,,,,x,,
+,"Pruebas (saneamientos, analíticas)",,,,,x,,
+,Tratamientos,,,,,x,,
+INFORMES,Cuaderno de Campo (agro),,x,,,,,
+,Libro de Registro (ganadero),,,,,x,,
+ANALITICA / METRICAS,Analitica Basica,,x,,,x,,
+,Analitica Premium,,,x,,,x,
+,Analitica a medida,,,,x,,,x
+,Analitica Sostenibilidad (ODS),,,,x,,,x
+BLOG / CANAL DE NOTICIAS,Noticias por Comunidad Autonoma(RSS),,,x,,,x,
+,Subastas ,,,,,,,
+IOT,Sensores,,,x,x,,x,x
+,Integración app tractores/maquinaria,,,x,x,,x,x
+,Microchips animales,,,x,x,,x,x
+,Geolocalización,,,x,x,,x,x
+METEOLOGIA,,,,x,x,,x,x
+FORMACIÓN,Cursos,,,x,x,,x,x
+,Certificados,,,x,x,,x,x
+ADMINISTRACIÓN,Facturas emitidas,,,x,,,x,
+,Facturas recibidas,,x,,,x,,
+,Albaranes,,,x,x,,x,x
+,Nominas,,,x,x,,x,x
+,Plan de trabajo /ejecución (funciones por empleado),,,x,x,,x,x
+ANALISIS FINANCIERO,Analisis costes / magenes,,x,x,,x,x,
+,Ratios,,x,x,x,x,x,x
+,Informe mensual,,,,x,,,x
+,Informe Trimestral,,,,x,,,x
+,Informe Semestral,,,,x,,,x
+,Informe Anual,,x,,,x,,
