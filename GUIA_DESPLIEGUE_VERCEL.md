@@ -101,3 +101,30 @@ Una vez completado el redespliegue, abre la URL pública proporcionada por Verce
 
 *   **Modo Demo Local (Por Defecto):** Permite navegar por todo el dashboard, simular el escaneo de plagas y chatear con el Asistente SIEX al instante sin realizar ninguna llamada de red, ideal para demostraciones rápidas.
 *   **Supabase Auth:** Te permite introducir las credenciales reales de tus usuarios registrados (ej. `carlos@agrotoledo.es`) y validar el flujo de inicio de sesión real contra tu base de datos PostgreSQL alojada en Supabase.
+
+---
+
+## 🌤️ Integración y Actualización de Clima en Vivo (AEMET)
+
+La sección de **Sensores IoT** de AgroApp calcula recomendaciones de riego inteligentes basándose en variables meteorológicas reales. Para evitar datos obsoletos en el mockup, hemos integrado un actualizador dinámico conectado directamente a las **APIs de la AEMET**.
+
+### 1. El Script de Actualización
+El script en `frontend/scripts/update_weather.py` realiza lo siguiente:
+*   Se conecta a la API de AEMET usando la clave de API oficial configurada.
+*   Obtiene la predicción oficial para **Toledo** (Alcaudete de la Jara - ID: `45005`) y **Cáceres** (Trujillo - ID: `10190`).
+*   Limpia y da formato a los campos (lluvia, viento, temperaturas y humedad) estructurándolos exactamente como requiere el front.
+*   Actualiza el archivo estático `frontend/public/aemet_data.json`.
+
+### 2. Cómo actualizar los datos meteorológicos antes de desplegar
+Cuando quieras actualizar el clima del mockup a las predicciones reales del día actual:
+1.  Abre la terminal en la carpeta `/frontend` y ejecuta el comando de Node:
+    ```bash
+    npm run update-weather
+    ```
+2.  Agrega el archivo JSON actualizado a tu commit de Git y envíalo a GitHub:
+    ```bash
+    git add public/aemet_data.json
+    git commit -m "chore: actualizar predicción del clima de AEMET en vivo"
+    git push
+    ```
+3.  Vercel detectará el commit, recompilará y servirá el mockup con el pronóstico del tiempo real y actualizado de las explotaciones agrícolas.
