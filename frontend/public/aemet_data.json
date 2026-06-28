@@ -5,18 +5,70 @@
     "prediccion": {
       "dia": [
         {
-          "fecha": "2026-06-27T00:00:00",
+          "fecha": "2026-06-28T00:00:00",
           "temperatura": {
             "maxima": 36,
-            "minima": 20
+            "minima": 19
           },
           "probPrecipitacion": [
             {
               "value": 0,
               "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-06"
+            },
+            {
+              "value": 5,
+              "periodo": "06-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-18"
+            },
+            {
+              "value": 0,
+              "periodo": "18-24"
             }
           ],
           "estadoCielo": [
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "",
+              "value": ""
+            },
+            {
+              "descripcion": "",
+              "value": ""
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "",
+              "value": ""
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
             {
               "descripcion": "Despejado",
               "value": "11"
@@ -24,41 +76,271 @@
           ],
           "viento": [
             {
-              "direccion": "SO",
-              "velocidad": 10
+              "direccion": "O",
+              "velocidad": 25
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
+            },
+            {
+              "direccion": "O",
+              "velocidad": 25
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
+            },
+            {
+              "direccion": "O",
+              "velocidad": 15
+            },
+            {
+              "direccion": "O",
+              "velocidad": 25
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 20
             }
           ],
           "humedadRelativa": {
-            "maxima": 40,
+            "maxima": 65,
             "minima": 15
           }
         },
         {
-          "fecha": "2026-06-28T00:00:00",
+          "fecha": "2026-06-29T00:00:00",
           "temperatura": {
-            "maxima": 35,
+            "maxima": 38,
             "minima": 20
           },
           "probPrecipitacion": [
             {
-              "value": 30,
+              "value": 0,
               "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-06"
+            },
+            {
+              "value": 0,
+              "periodo": "06-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-18"
+            },
+            {
+              "value": 0,
+              "periodo": "18-24"
             }
           ],
           "estadoCielo": [
             {
-              "descripcion": "Intervalos nubosos",
-              "value": "13"
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11n"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
             }
           ],
           "viento": [
             {
-              "direccion": "O",
-              "velocidad": 25
+              "direccion": "E",
+              "velocidad": 15
+            },
+            {
+              "direccion": "E",
+              "velocidad": 15
+            },
+            {
+              "direccion": "E",
+              "velocidad": 30
+            },
+            {
+              "direccion": "E",
+              "velocidad": 15
+            },
+            {
+              "direccion": "E",
+              "velocidad": 30
+            },
+            {
+              "direccion": "E",
+              "velocidad": 15
+            },
+            {
+              "direccion": "NO",
+              "velocidad": 5
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 10
             }
           ],
           "humedadRelativa": {
-            "maxima": 55,
+            "maxima": 60,
+            "minima": 15
+          }
+        },
+        {
+          "fecha": "2026-06-30T00:00:00",
+          "temperatura": {
+            "maxima": 40,
+            "minima": 22
+          },
+          "probPrecipitacion": [
+            {
+              "value": 0,
+              "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "E",
+              "velocidad": 25
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
+            },
+            {
+              "direccion": "E",
+              "velocidad": 25
+            },
+            {
+              "direccion": "N",
+              "velocidad": 15
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 50,
+            "minima": 15
+          }
+        },
+        {
+          "fecha": "2026-07-01T00:00:00",
+          "temperatura": {
+            "maxima": 40,
+            "minima": 23
+          },
+          "probPrecipitacion": [
+            {
+              "value": 0,
+              "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "E",
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 20
+            },
+            {
+              "direccion": "N",
+              "velocidad": 15
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 50,
             "minima": 15
           }
         }
@@ -71,18 +353,179 @@
     "prediccion": {
       "dia": [
         {
-          "fecha": "2026-06-27T00:00:00",
+          "fecha": "2026-06-28T00:00:00",
           "temperatura": {
-            "maxima": 38,
-            "minima": 22
+            "maxima": 36,
+            "minima": 19
           },
           "probPrecipitacion": [
             {
               "value": 0,
               "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-06"
+            },
+            {
+              "value": 0,
+              "periodo": "06-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-18"
+            },
+            {
+              "value": 0,
+              "periodo": "18-24"
             }
           ],
           "estadoCielo": [
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "",
+              "value": ""
+            },
+            {
+              "descripcion": "",
+              "value": ""
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "",
+              "value": ""
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "O",
+              "velocidad": 15
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
+            },
+            {
+              "direccion": "O",
+              "velocidad": 15
+            },
+            {
+              "direccion": "O",
+              "velocidad": 5
+            },
+            {
+              "direccion": "O",
+              "velocidad": 10
+            },
+            {
+              "direccion": "O",
+              "velocidad": 15
+            },
+            {
+              "direccion": "N",
+              "velocidad": 10
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 65,
+            "minima": 15
+          }
+        },
+        {
+          "fecha": "2026-06-29T00:00:00",
+          "temperatura": {
+            "maxima": 39,
+            "minima": 20
+          },
+          "probPrecipitacion": [
+            {
+              "value": 0,
+              "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-06"
+            },
+            {
+              "value": 0,
+              "periodo": "06-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-18"
+            },
+            {
+              "value": 0,
+              "periodo": "18-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11n"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
             {
               "descripcion": "Despejado",
               "value": "11"
@@ -91,41 +534,162 @@
           "viento": [
             {
               "direccion": "E",
-              "velocidad": 15
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 10
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 10
+            },
+            {
+              "direccion": "N",
+              "velocidad": 5
+            },
+            {
+              "direccion": "C",
+              "velocidad": 0
             }
           ],
           "humedadRelativa": {
-            "maxima": 30,
-            "minima": 10
+            "maxima": 55,
+            "minima": 15
           }
         },
         {
-          "fecha": "2026-06-28T00:00:00",
+          "fecha": "2026-06-30T00:00:00",
           "temperatura": {
-            "maxima": 39,
-            "minima": 23
+            "maxima": 40,
+            "minima": 22
           },
           "probPrecipitacion": [
             {
-              "value": 5,
+              "value": 0,
               "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
             }
           ],
           "estadoCielo": [
             {
               "descripcion": "Despejado",
               "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Despejado",
+              "value": "11"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
             }
           ],
           "viento": [
             {
               "direccion": "NE",
-              "velocidad": 15
+              "velocidad": 5
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 5
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 10
+            },
+            {
+              "direccion": "N",
+              "velocidad": 5
             }
           ],
           "humedadRelativa": {
-            "maxima": 35,
-            "minima": 12
+            "maxima": 50,
+            "minima": 15
+          }
+        },
+        {
+          "fecha": "2026-07-01T00:00:00",
+          "temperatura": {
+            "maxima": 41,
+            "minima": 25
+          },
+          "probPrecipitacion": [
+            {
+              "value": 0,
+              "periodo": "00-24"
+            },
+            {
+              "value": 0,
+              "periodo": "00-12"
+            },
+            {
+              "value": 0,
+              "periodo": "12-24"
+            }
+          ],
+          "estadoCielo": [
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            },
+            {
+              "descripcion": "Poco nuboso",
+              "value": "12"
+            }
+          ],
+          "viento": [
+            {
+              "direccion": "NE",
+              "velocidad": 10
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 10
+            },
+            {
+              "direccion": "E",
+              "velocidad": 15
+            },
+            {
+              "direccion": "NE",
+              "velocidad": 10
+            }
+          ],
+          "humedadRelativa": {
+            "maxima": 45,
+            "minima": 15
           }
         }
       ]
